@@ -69,6 +69,19 @@ class Board:
                 if adj.value != -1:
                     adj.value += 1
 
+    def has_won(self) -> bool:
+        count = 0
+        for row in range(self.rows):
+            for col in range(self.cols):
+                cell = self.cells[row][col]
+                if cell.state == GROUND or cell.state == FLAG:
+                    count += 1
+
+        if self.mines == count:
+            return True
+        else:
+            return False
+
     def create_mines(self) -> None:
         mines_created = 0
 
