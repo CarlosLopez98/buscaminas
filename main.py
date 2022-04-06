@@ -4,7 +4,7 @@ from board import Board
 
 pygame.init()
 
-WIDTH, HEIGHT = 600, 600
+WIDTH, HEIGHT = 600, 700
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Buscaminas")

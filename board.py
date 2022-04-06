@@ -1,14 +1,15 @@
 import pygame
 import random
 from cell import Cell
+from cell import GROUND, DIGGED, FLAG
 
 pygame.font.init()
 
 COLORS = ((229, 194, 159), (51, 167, 242), (60, 225, 67), (234, 57, 65),
-          (120, 63, 227), (255, 255, 255), (255, 255, 255), (255, 255, 255),
-          (255, 255, 255))
-BG_COLORS = ((229, 194, 159), (215, 184, 153), (167, 217, 72), (142, 204, 17))
-FONT30 = pygame.font.SysFont("Arial", 20, True)
+          (120, 63, 227), (242, 56, 23), (16, 172, 122), (172, 16, 132),
+          (16, 18, 172))
+BG_COLORS = ((242, 208, 174), (230, 198, 166), (167, 217, 72), (142, 204, 17))
+FONT30 = pygame.font.SysFont("Arial", 24, True)
 
 
 class Board:
@@ -27,7 +28,7 @@ class Board:
         for row in range(self.rows):
             for col in range(self.cols):
                 cell = self.cells[row][col]
-                if cell.state:
+                if cell.state == DIGGED:
                     # Board style like chess
                     if (row + col) % 2 == 0:
                         pygame.draw.rect(win, BG_COLORS[0], cell)
@@ -43,11 +44,14 @@ class Board:
                         text_rect.center = cell.center
                         win.blit(number_text, text_rect)
                         # pygame.draw.rect(win, COLORS[value], rect)
-                else:
+                elif cell.state == GROUND:
                     if (row + col) % 2 == 0:
                         pygame.draw.rect(win, BG_COLORS[2], cell)
                     else:
                         pygame.draw.rect(win, BG_COLORS[3], cell)
+                elif cell.state == FLAG:
+                    # draw the flag
+                    pass
 
     def create(self) -> None:
         win = pygame.display.get_surface()
@@ -90,3 +94,11 @@ class Board:
                     adjacents.append(self.cells[row][col])
 
         return adjacents
+
+    def dig(self, row: int, col: int):
+        cell = self.cells[row][col]
+        cell.open()
+
+    def flag(self, row: int, col: int):
+        cell = self.cells[row][col]
+        cell.mark()
