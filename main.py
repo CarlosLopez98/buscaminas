@@ -4,7 +4,7 @@ from board import Board
 
 pygame.init()
 
-WIDTH, HEIGHT = 600, 700
+WIDTH, HEIGHT = 600, 600
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Buscaminas")
@@ -23,6 +23,15 @@ def draw(win, board: Board) -> None:
     pygame.display.update()
 
 
+def clicked_cell(board: Board, mouse_pos: tuple):
+    for row in range(ROWS):
+        for col in range(COLS):
+            cell = board.get_cell(row, col)
+            if cell.collidepoint(*mouse_pos):
+                return cell
+    return None
+
+
 def game_loop():
     board = Board(ROWS, COLS, MINES)
 
@@ -33,9 +42,15 @@ def game_loop():
             if event.type == QUIT:
                 run = False
             if event.type == MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
                 if pygame.mouse.get_pressed()[0] == 1:
-                    mouse_pos = pygame.mouse.get_pos()
-                    min_size = min(HEIGHT // ROWS, WIDTH // COLS)
+                    cell = clicked_cell(board, mouse_pos)
+                    if cell is not None:
+                        board.dig(cell)
+                if pygame.mouse.get_pressed()[2] == 1:
+                    cell = clicked_cell(board, mouse_pos)
+                    if cell is not None:
+                        cell.flag()
 
         draw(WIN, board)
 

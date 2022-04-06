@@ -51,20 +51,20 @@ class Board:
                         pygame.draw.rect(win, BG_COLORS[3], cell)
                 elif cell.state == FLAG:
                     # draw the flag
-                    pass
+                    pygame.draw.rect(win, (255, 0, 0), cell)
 
     def create(self) -> None:
         win = pygame.display.get_surface()
         min_size = min(win.get_height() // self.rows,
                        win.get_width() // self.cols)
 
-        self.cells = [[Cell(col * min_size, row * min_size, min_size, min_size)
+        self.cells = [[Cell(col * min_size, row * min_size, min_size, min_size, (row, col))
                        for col in range(self.cols)] for row in range(self.rows)]
 
         self.create_mines()
 
         for mine in self.mines_pos:
-            adjs = self.get_adjacents(mine, self.rows, self.cols)
+            adjs = self.get_adjacents(mine)
             for adj in adjs:
                 if adj.value != -1:
                     adj.value += 1
@@ -83,22 +83,25 @@ class Board:
                 cell.value = -1
                 mines_created += 1
 
-    def get_adjacents(self, pos, rows, cols):
+    def get_cell(self, row: int, col: int) -> Cell:
+        return self.cells[row][col]
+
+    def get_adjacents(self, pos: tuple):
         adjacents = []
 
         x, y = pos
         for row in range(x - 1, x + 2):
             x, y = pos
             for col in range(y - 1, y + 2):
-                if (row >= 0 and col >= 0) and (row != x or col != y) and (row < rows and col < cols):
-                    adjacents.append(self.cells[row][col])
+                if (row >= 0 and col >= 0) and (row != x or col != y) and (row < self.rows and col < self.cols):
+                    adjacents.append(self.get_cell(row, col))
 
         return adjacents
 
-    def dig(self, row: int, col: int):
-        cell = self.cells[row][col]
-        cell.open()
-
-    def flag(self, row: int, col: int):
-        cell = self.cells[row][col]
-        cell.mark()
+    def dig(self, cell: Cell):
+        if cell.state == GROUND:
+            cell.dig()
+            if cell.value == 0:
+                beside = self.get_adjacents(cell.pos)
+                for side in beside:
+                    self.dig(side)

@@ -7,13 +7,17 @@ FLAG = 2
 
 class Cell(pygame.Rect):
 
-    def __init__(self, left: float, top: float, width: float, height: float, value: int = 0):
+    def __init__(self, left: float, top: float, width: float, height: float, pos: tuple, value: int = 0):
         super(Cell, self).__init__(left, top, width, height)
-        self.state = DIGGED
+        self.pos = pos
+        self.state = GROUND
         self.value = value
 
-    def open(self):
+    def dig(self):
         self.state = DIGGED
 
-    def mark(self):
-        self.state = FLAG
+    def flag(self):
+        if self.state == GROUND:
+            self.state = FLAG
+        elif self.state == FLAG:
+            self.state = GROUND
