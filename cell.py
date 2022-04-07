@@ -16,8 +16,12 @@ class Cell(pygame.Rect):
     def dig(self):
         self.state = DIGGED
 
-    def flag(self):
+    def flag(self, num: int) -> int:
         if self.state == GROUND:
             self.state = FLAG
+            num += 1
         elif self.state == FLAG:
             self.state = GROUND
+            num -= 1
+
+        return num

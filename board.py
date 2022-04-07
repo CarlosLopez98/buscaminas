@@ -18,6 +18,7 @@ class Board:
         self.rows = rows
         self.cols = cols
         self.mines = mines
+        self.flags = 0
         self.mines_pos = set()
         self.cells = None
 
@@ -52,6 +53,16 @@ class Board:
                 elif cell.state == FLAG:
                     # draw the flag
                     pygame.draw.rect(win, (255, 0, 0), cell)
+
+    def restart(self, rows: int, cols: int, mines: int):
+        self.rows = rows
+        self.cols = cols
+        self.mines = mines
+        self.flags = 0
+        self.mines_pos.clear()
+        self.cells = None
+
+        self.create()
 
     def create(self) -> None:
         win = pygame.display.get_surface()
